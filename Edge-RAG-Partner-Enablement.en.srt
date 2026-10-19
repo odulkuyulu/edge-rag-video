@@ -132,104 +132,142 @@ inference automatically. Verify that
 Git ignores dot env, and never share the actual keys.
 
 29
-00:02:19,667 --> 00:02:25,734
+00:02:19,667 --> 00:02:24,983
+First, explicitly download the images. In the repository
+folder, run Docker Compose pull
+
+30
+00:02:24,983 --> 00:02:30,298
+with the supplied file. This downloads all eight images,
+including the Azure Language
+
+31
+00:02:30,298 --> 00:02:35,614
+features, Document Intelligence, and its Layout dependency.
+The two supplied Docker Desktop views
+
+32
+00:02:35,614 --> 00:02:39,702
+identify the Language and Document images used in this lab.
+
+33
+00:02:41,709 --> 00:02:47,776
 Validate Compose with config quiet, start the stack, and
 check that all eight
 
-30
-00:02:25,734 --> 00:02:31,801
+34
+00:02:47,776 --> 00:02:53,843
 containers are running. Then run the service verifier. It
 exercises actual Language processing,
 
-31
-00:02:31,801 --> 00:02:36,468
+35
+00:02:53,843 --> 00:02:58,510
 PDF extraction, embeddings, and generation. Continue when
 every check passes.
 
-32
-00:02:38,500 --> 00:02:43,135
+36
+00:03:00,542 --> 00:03:05,141
+Next, open Docker Desktop, select Containers, and expand
+edge rag local A I.
+
+37
+00:03:05,141 --> 00:03:09,740
+Confirm green running indicators for all eight services.
+Your supplied capture shows the
+
+38
+00:03:09,740 --> 00:03:14,339
+complete stack. Use Docker Compose P S to check the same
+status and
+
+39
+00:03:14,339 --> 00:03:16,108
+port mappings on your machine.
+
+40
+00:03:18,125 --> 00:03:22,760
 For a fresh lab, index the English sample documents once.
 Expect eight chunks,
 
-33
-00:02:43,135 --> 00:02:47,771
+41
+00:03:22,760 --> 00:03:27,396
 then run the verifier with dash dash rag. Start the
 interface with the
 
-34
-00:02:47,771 --> 00:02:52,406
+42
+00:03:27,396 --> 00:03:32,031
 supplied launcher and open localhost port eighty five zero
 three on the same
 
-35
-00:02:52,406 --> 00:02:57,041
+43
+00:03:32,031 --> 00:03:36,666
 host. In a VM lab, use the browser inside the VM. Skip
 indexing
 
-36
-00:02:57,041 --> 00:02:59,180
+44
+00:03:36,666 --> 00:03:38,805
 if the collection is already populated.
 
-37
-00:03:01,208 --> 00:03:06,432
+45
+00:03:40,833 --> 00:03:46,057
 Here is the actual recorded query workflow. Keep B G E M
 three
 
-38
-00:03:06,432 --> 00:03:11,656
+46
+00:03:46,057 --> 00:03:51,281
 and the Qwen generator selected, choose the business
 partnership filter, and enter the
 
-39
-00:03:11,656 --> 00:03:16,880
+47
+00:03:51,281 --> 00:03:56,505
 investment question. Select Enhanced Search and Generate.
 The recorded answer identifies Microsoft's investment
 
-40
-00:03:16,880 --> 00:03:22,103
+48
+00:03:56,505 --> 00:04:01,728
 as one point five billion dollars. Expand Source One to
 inspect the supporting
 
-41
-00:03:22,103 --> 00:03:25,318
+49
+00:04:01,728 --> 00:04:04,943
 partnership text. The investment amount matches the
 document.
 
-42
-00:03:47,083 --> 00:03:52,078
+50
+00:04:26,708 --> 00:04:31,703
 For the second question, ask which cloud platform G42 will
 use for its
 
-43
-00:03:52,078 --> 00:03:57,074
+51
+00:04:31,703 --> 00:04:36,699
 AI services. Submit it through the same Streamlit interface.
 The recorded answer identifies
 
-44
-00:03:57,074 --> 00:04:02,069
+52
+00:04:36,699 --> 00:04:41,694
 Microsoft's Azure cloud platform. Open a retrieved source
 and compare that key fact
 
-45
-00:04:02,069 --> 00:04:07,064
+53
+00:04:41,694 --> 00:04:46,689
 with the partnership document. These two examples show local
 retrieval and generation working
 
-46
-00:04:07,064 --> 00:04:10,138
+54
+00:04:46,689 --> 00:04:49,763
 together, with source evidence available in the interface.
 
-47
-00:04:34,042 --> 00:04:38,662
+55
+00:05:13,667 --> 00:05:18,287
 You are ready to rehearse: confirm the host, configure the
 Azure resources, start
 
-48
-00:04:38,662 --> 00:04:43,283
+56
+00:05:18,287 --> 00:05:22,908
 and validate the containers, then run the sample questions
 and inspect their sources.
 
-49
-00:04:43,283 --> 00:04:47,548
+57
+00:05:22,908 --> 00:05:27,173
 Keep the partner enablement guide open for the full commands
 and troubleshooting.
