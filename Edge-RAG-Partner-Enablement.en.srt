@@ -1,0 +1,609 @@
+1
+00:00:00,000 --> 00:00:05,874
+Welcome to the Edge RAG partner enablement walkthrough. We
+will cover the technical
+
+2
+00:00:05,874 --> 00:00:11,747
+configuration and then watch four real questions in
+Streamlit. The setup sections are
+
+3
+00:00:11,747 --> 00:00:17,621
+clearly labeled illustrations, not recordings of new Azure
+deployments. The application recordings are
+
+4
+00:00:17,621 --> 00:00:23,494
+genuine, and their generated answers have not been
+rewritten. This video uses an
+
+5
+00:00:23,494 --> 00:00:24,850
+English synthetic narrator.
+
+6
+00:00:26,875 --> 00:00:33,013
+This is connected local inference, not an air gapped
+deployment. Document Intelligence and
+
+7
+00:00:33,013 --> 00:00:39,150
+Language inference run in local containers. Ollama supplies
+embeddings and text generation, and
+
+8
+00:00:39,150 --> 00:00:45,288
+Qdrant supplies vector retrieval. Azure AI containers still
+need approved billing connectivity. Despite
+
+9
+00:00:45,288 --> 00:00:51,425
+the wording in the sample question list, this solution does
+not use Azure
+
+10
+00:00:51,425 --> 00:00:52,370
+AI Search.
+
+11
+00:00:54,375 --> 00:01:00,688
+A VM is optional. A compatible x64 workstation is also
+suitable. For this
+
+12
+00:01:00,688 --> 00:01:07,000
+lab, plan sixteen virtual CPUs, roughly ninety six to one
+hundred twenty eight
+
+13
+00:01:07,000 --> 00:01:13,313
+gibibytes of host memory, and about sixty four for Docker.
+Reserve ample persistent
+
+14
+00:01:13,313 --> 00:01:19,625
+disk space. Verify the Docker server, Linux engine
+architecture, memory, and actual Docker
+
+15
+00:01:19,625 --> 00:01:23,024
+data disk before downloading the large images.
+
+16
+00:01:25,042 --> 00:01:31,038
+In Azure portal, create an Azure AI Language resource.
+Select the required features,
+
+17
+00:01:31,038 --> 00:01:37,035
+your approved subscription and resource group, a supported
+region, and a unique resource
+
+18
+00:01:37,035 --> 00:01:43,032
+name. Confirm the current pricing tier eligibility for the
+exact container features. Review
+
+19
+00:01:43,032 --> 00:01:49,029
+and create the resource. After deployment, open Keys and
+Endpoint privately. Never share
+
+20
+00:01:49,029 --> 00:01:53,641
+that blade or a real key on the workshop screen.
+
+21
+00:01:55,667 --> 00:02:01,692
+Create a separate Document Intelligence resource through the
+same portal sequence. Use a
+
+22
+00:02:01,692 --> 00:02:07,718
+region and pricing tier supported by the selected container
+images. Obtain its endpoint
+
+23
+00:02:07,718 --> 00:02:13,744
+and key privately. This workshop deliberately matches the
+tested General Document version three
+
+24
+00:02:13,744 --> 00:02:19,769
+container, its Layout dependency, and the August twenty
+twenty two API version. Review
+
+25
+00:02:19,769 --> 00:02:23,941
+current lifecycle and container support before any
+production use.
+
+26
+00:02:25,958 --> 00:02:32,166
+Resolve governance before starting containers. This Compose
+file uses API keys for container
+
+27
+00:02:32,166 --> 00:02:38,373
+billing. If your organization prohibits key authentication,
+stop and ask the resource and
+
+28
+00:02:38,373 --> 00:02:44,580
+security owners for an approved supported path. A tenant
+specific exclusion tag is
+
+29
+00:02:44,580 --> 00:02:50,788
+not a general prerequisite. Also approve outbound
+connectivity and review container, model, and
+
+30
+00:02:50,788 --> 00:02:53,652
+Docker licensing terms before accepting them.
+
+31
+00:02:55,667 --> 00:03:01,175
+Clone the published Edge RAG repository into a new lab
+directory and select
+
+32
+00:03:01,175 --> 00:03:06,683
+workshop commit five e d nine three eight c. Create an
+isolated x64
+
+33
+00:03:06,683 --> 00:03:12,191
+Python environment. The next screen shows the lab dependency
+command, also available in
+
+34
+00:03:12,191 --> 00:03:17,699
+section seven of the partner guide. Use the environment's
+interpreter explicitly; activation is
+
+35
+00:03:17,699 --> 00:03:18,547
+not required.
+
+36
+00:03:20,583 --> 00:03:26,540
+Install the lab dependencies through your approved package
+feed. Keep Qdrant client below
+
+37
+00:03:26,540 --> 00:03:32,498
+version one point sixteen, because the application's legacy
+search method was removed in
+
+38
+00:03:32,498 --> 00:03:38,455
+that version. Preserve the Azure SDK constraints shown here.
+Run pip check and
+
+39
+00:03:38,455 --> 00:03:44,412
+resolve any dependency errors before continuing. Do not
+disable certificate validation to bypass
+
+40
+00:03:44,412 --> 00:03:46,703
+package feed or proxy problems.
+
+41
+00:03:48,708 --> 00:03:54,380
+Prepare both models before the live session. Use a working
+host Ollama installation
+
+42
+00:03:54,380 --> 00:04:00,053
+to pull B G E M three and Qwen two point five, zero
+
+43
+00:04:00,053 --> 00:04:05,725
+point five billion parameters. Or reuse approved existing
+model files, including their manifests
+
+44
+00:04:05,725 --> 00:04:11,397
+and blobs. The demonstration container reads that populated
+directory read only; it cannot
+
+45
+00:04:11,397 --> 00:04:17,069
+download into the mount. Its inference port is eleven four
+three five, separate
+
+46
+00:04:17,069 --> 00:04:18,378
+from host preparation.
+
+47
+00:04:20,417 --> 00:04:26,142
+Create a private dot env file using the full template in
+section nine
+
+48
+00:04:26,142 --> 00:04:31,868
+of the guide. Enter your Language and Document Intelligence
+endpoints and keys through
+
+49
+00:04:31,868 --> 00:04:37,594
+an approved secure method. Use plain URLs. Keep the cloud
+billing endpoints unchanged:
+
+50
+00:04:37,594 --> 00:04:43,319
+the launcher separately selects local inference endpoints.
+Verify that Git ignores the file
+
+51
+00:04:43,319 --> 00:04:49,045
+and that it is not tracked. Never show expanded Compose
+configuration or full
+
+52
+00:04:49,045 --> 00:04:49,926
+container environments.
+
+53
+00:04:51,958 --> 00:04:58,164
+Validate Compose with config dash dash quiet so keys are not
+printed. Start
+
+54
+00:04:58,164 --> 00:05:04,369
+the stack and inspect service status. Eight services should
+run: Language detection, entities,
+
+55
+00:05:04,369 --> 00:05:10,574
+key phrases, sentiment, Document, Layout, Qdrant, and
+Ollama. Document needs the internal Layout
+
+56
+00:05:10,574 --> 00:05:16,779
+service. The containers bind to loopback only. A running
+process is not proof
+
+57
+00:05:16,779 --> 00:05:19,643
+that its actual inference endpoint works.
+
+58
+00:05:21,667 --> 00:05:27,357
+The host ports are not interchangeable. Each Language
+feature has its own route,
+
+59
+00:05:27,357 --> 00:05:33,048
+and the current entity container uses a different API shape
+from older text
+
+60
+00:05:33,048 --> 00:05:38,739
+analytics endpoints. Document publishes host fifty ten to
+container fifty fifty. The supplied
+
+61
+00:05:38,739 --> 00:05:44,430
+launcher and shared routing helper handle these differences,
+select local Ollama, and enable
+
+62
+00:05:44,430 --> 00:05:50,121
+English only indexing. Do not replace the launcher with an
+unrelated Streamlit command.
+
+63
+00:05:52,125 --> 00:05:58,417
+Run the local service verifier before indexing. It performs
+real Language inference, real
+
+64
+00:05:58,417 --> 00:06:04,709
+sample PDF extraction, an actual one thousand twenty four
+dimensional embedding, and text
+
+65
+00:06:04,709 --> 00:06:11,001
+generation. Check every pass and the successful exit code. A
+model list or
+
+66
+00:06:11,001 --> 00:06:17,292
+health endpoint alone is insufficient. The optional routing
+regression suite contains eleven checks,
+
+67
+00:06:17,292 --> 00:06:21,164
+including preservation of cloud behavior outside local mode.
+
+68
+00:06:23,167 --> 00:06:28,745
+For a new empty lab collection, index the English fixtures
+once through Start
+
+69
+00:06:28,745 --> 00:06:34,322
+Local App with Index Only. The validated baseline is five
+partnership chunks and
+
+70
+00:06:34,322 --> 00:06:39,900
+three event chunks; the Arabic sample is explicitly skipped.
+Then run the verifier
+
+71
+00:06:39,900 --> 00:06:45,478
+with dash dash rag to exercise retrieval and generation. Do
+not reindex an
+
+72
+00:06:45,478 --> 00:06:51,056
+already populated lab: this indexer adds new point
+identifiers and therefore creates duplicates.
+
+73
+00:06:53,083 --> 00:06:58,294
+Launch the UI in another terminal using the same environment
+and launcher. Open
+
+74
+00:06:58,294 --> 00:07:03,504
+localhost port eighty five zero three on that same machine.
+In a Bastion
+
+75
+00:07:03,504 --> 00:07:08,714
+session, that means the VM browser, not your laptop browser.
+Check the local
+
+76
+00:07:08,714 --> 00:07:13,925
+Docker and English only banner. We now switch from
+illustrations to real recordings,
+
+77
+00:07:13,925 --> 00:07:18,334
+keeping B G E M three and the small Qwen generator.
+
+78
+00:07:20,375 --> 00:07:25,904
+This is an actual Streamlit recording from the container
+backed VM. We visibly
+
+79
+00:07:25,904 --> 00:07:31,432
+select the business partnership document filter and type the
+investment question from the
+
+80
+00:07:31,432 --> 00:07:36,961
+supplied list. Search and Generate retrieves the local
+document chunks and calls the
+
+81
+00:07:36,961 --> 00:07:42,490
+local Qwen model. The generated answer reports one point
+five billion dollars. Expanding
+
+82
+00:07:42,490 --> 00:07:48,018
+Source One exposes the source text used for retrieval. That
+central fact is
+
+83
+00:07:48,018 --> 00:07:53,547
+supported by the bundled partnership document. Extra
+sentences still need their own evidence
+
+84
+00:07:53,547 --> 00:07:59,076
+checks. The displayed confidence is an application
+heuristic, not a measured probability that
+
+85
+00:07:59,076 --> 00:08:00,777
+every statement is true.
+
+86
+00:08:06,250 --> 00:08:11,854
+The second real question asks which cloud platform G42 will
+use for its
+
+87
+00:08:11,854 --> 00:08:17,458
+AI services. We retain the business partnership filter and
+submit the question through
+
+88
+00:08:17,458 --> 00:08:23,062
+the same browser interface. The answer identifies
+Microsoft's Azure cloud platform, which the
+
+89
+00:08:23,062 --> 00:08:28,666
+source supports. Again, open a retrieved source and check
+the document rather than
+
+90
+00:08:28,666 --> 00:08:34,270
+accepting fluent wording alone. The extra investment,
+sector, or location details in a
+
+91
+00:08:34,270 --> 00:08:39,874
+generated response should be checked separately. This is
+retrieval over Qdrant with local
+
+92
+00:08:39,874 --> 00:08:43,323
+generation, not a query to Azure AI Search.
+
+93
+00:08:53,208 --> 00:08:58,850
+Now we select the events business filter and ask when and
+where the
+
+94
+00:08:58,850 --> 00:09:04,491
+AI in Finance Summit London takes place. These are
+historical September twenty twenty
+
+95
+00:09:04,491 --> 00:09:10,132
+five sample events, not upcoming listings. Watch the actual
+result: the model says
+
+96
+00:09:10,132 --> 00:09:15,774
+September ninth and tenth, and omits the venue, despite a
+one hundred percent
+
+97
+00:09:15,774 --> 00:09:21,415
+confidence display. That answer is incorrect. Expand Source
+One. Its text gives September
+
+98
+00:09:21,415 --> 00:09:27,056
+ninth and Hilton London Tower Bridge. The two day range
+belongs to another
+
+99
+00:09:27,056 --> 00:09:32,698
+conference in the fixture. Keep this failure visible:
+retrieved evidence does not prevent
+
+100
+00:09:32,698 --> 00:09:35,735
+a small generator from confusing adjacent events.
+
+101
+00:09:38,958 --> 00:09:44,348
+Our fourth actual question asks about the React Advanced
+London Meetup topics. The
+
+102
+00:09:44,348 --> 00:09:49,738
+answer lists TypeScript and agentic AI, matching the sample
+document. But it also
+
+103
+00:09:49,738 --> 00:09:55,128
+claims there is no specific mention of that meetup or its
+topics. That
+
+104
+00:09:55,128 --> 00:10:00,517
+statement contradicts both the source and the rest of the
+answer. Expand Source
+
+105
+00:10:00,517 --> 00:10:05,907
+One to inspect the exact event wording. This is not a clean
+acceptance
+
+106
+00:10:05,907 --> 00:10:11,297
+pass simply because the right keywords appear. Check factual
+accuracy, completeness, and internal
+
+107
+00:10:11,297 --> 00:10:16,687
+consistency, especially when a tiny local model is being
+used for an enablement
+
+108
+00:10:16,687 --> 00:10:17,101
+demonstration.
+
+109
+00:10:24,792 --> 00:10:30,770
+The recording demonstrates working local retrieval and
+generation, not guaranteed factual accuracy. Two
+
+110
+00:10:30,770 --> 00:10:36,749
+central partnership facts are supported; the event examples
+expose a wrong answer and
+
+111
+00:10:36,749 --> 00:10:42,728
+a contradiction. For partner acceptance, compare every
+required fact to the source, and
+
+112
+00:10:42,728 --> 00:10:48,707
+check omissions and consistency. A larger validated
+generator or improved prompting may help,
+
+113
+00:10:48,707 --> 00:10:54,685
+but any change needs a new evaluation. Do not present this
+English lab
+
+114
+00:10:54,685 --> 00:10:57,905
+as proof of multilingual or production readiness.
+
+115
+00:10:59,917 --> 00:11:06,127
+For a daily restart, sign in, start Docker Desktop,
+reconcile Compose, and launch
+
+116
+00:11:06,127 --> 00:11:12,338
+the UI. Do not index the same documents again. If something
+fails, inspect
+
+117
+00:11:12,338 --> 00:11:18,549
+the specific service and its real inference check. At the
+end, stop Streamlit
+
+118
+00:11:18,549 --> 00:11:24,760
+and bring the stack down without deleting volumes. VM
+deallocation is separate and
+
+119
+00:11:24,760 --> 00:11:30,971
+requires the infrastructure owner's agreement. Disks,
+storage, and connected service usage can still
+
+120
+00:11:30,971 --> 00:11:31,926
+incur costs.
+
+121
+00:11:33,958 --> 00:11:40,095
+Use the published partner enablement guide for the full
+copyable commands, private environment
+
+122
+00:11:40,095 --> 00:11:46,231
+template, troubleshooting, and workshop checkpoints. The
+reference workshop release is commit five e
+
+123
+00:11:46,231 --> 00:11:52,367
+d nine three eight c in the Edge RAG repository. Check
+current Microsoft
+
+124
+00:11:52,367 --> 00:11:58,504
+documentation for resource creation, container support,
+billing, and lifecycle. Rehearse on the actual
+
+125
+00:11:58,504 --> 00:12:04,640
+participant host, use approved sample data, and make source
+verification part of every
+
+126
+00:12:04,640 --> 00:12:05,112
+demonstration.
